@@ -1,0 +1,15 @@
+'context-menu':
+  '.overlayer':
+      'Enable Semaphore': 'semaphore:toggle'
+
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'Semaphore'
+      'submenu': [
+        { 'label': 'Toggle', 'command': 'semaphore:toggle' }
+      ]
+    ]
+  }
+]
