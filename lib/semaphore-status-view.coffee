@@ -1,21 +1,27 @@
 {$$, View} = require 'atom'
+Shell = require 'shell'
 
 SemaphoreClient = require './semaphore-client'
 
 module.exports =
   class SemaphoreStatusView extends View
+
     @content: ->
-      @div class: 'semaphore-status-view inline-block', =>
+      @a href: '#', class: 'semaphore-status-view inline-block', =>
         @span outlet: 'statusIcon'
         @span outlet: 'statusLabel'
 
     initialize: ->
-      @repo      = atom.project.getRepo()
-      @authToken = atom.config.get 'semaphore.authToken'
-      @fetchProjects() if @repo and @authToken?
+      @repo        = atom.project.getRepo()
+      @buildUrl = ''
+      @fetchProjects() if @repo and (atom.config.get 'semaphore.authToken')?
+
+      @subscribe this, 'click', =>
+        Shell.openExternal @buildUrl
+        false
 
     fetchProjects: ->
-      @api = new SemaphoreClient @authToken
+      @api = new SemaphoreClient (atom.config.get 'semaphore.authToken')
       @api.fetchProjects (projects) =>
         @fetchHashIdOfCurrentProject(projects) if projects?
 
@@ -52,15 +58,20 @@ module.exports =
         # Do a new lookup every 10 seconds
         window.setTimeout =>
           @fetchCurrentBranchId(hashId)
-        , 10000
+        , @timeToFetch()
 
     fetchStatus: (hashId, branchId) ->
       @api.fetchStatus hashId, branchId, (status) =>
         return unless status?
 
+        @buildUrl = status.build_url
         @showStatus status.result
         @statusLabel.text "#{status.build_number} (#{status.branch_name})"
 
+    timeToFetch: ->
+      ttf = parseInt(atom.config.get 'semaphore.timeToFetch')
+      ttf = 10 if !ttf
+      ttf * 1000
 
     destroy: ->
       @detach()

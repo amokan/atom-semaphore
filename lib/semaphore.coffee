@@ -4,6 +4,7 @@ module.exports =
   semaphoreStatusView: null
   configDefaults:
     authToken: 'AUTH TOKEN'
+    timeToFetch: '10'
 
   activate: (state) ->
     if atom.workspaceView.statusBar?
