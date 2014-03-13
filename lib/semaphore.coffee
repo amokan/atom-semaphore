@@ -3,7 +3,7 @@ SemaphoreStatusView = require './semaphore-status-view'
 module.exports =
   semaphoreStatusView: null
   configDefaults:
-    authToken: 'aaa'
+    authToken: 'AUTH TOKEN'
 
   activate: (state) ->
     if atom.workspaceView.statusBar?

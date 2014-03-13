@@ -11,7 +11,7 @@ module.exports =
 
     initialize: ->
       @repo      = atom.project.getRepo()
-      @authToken = atom.config.get 'atom-semaphore.authToken'
+      @authToken = atom.config.get 'semaphore.authToken'
       @fetchProjects() if @repo and @authToken?
 
     fetchProjects: ->
